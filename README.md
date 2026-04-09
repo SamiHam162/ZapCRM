@@ -6,6 +6,52 @@ Built with Next.js 16, Tailwind CSS v4, shadcn/ui, and Anthropic Claude.
 
 ---
 
+## Approach
+
+### The Problem
+When a new client signs up, the producer needs to:
+1. Manually visit the client's website and Dapei Zahav listing
+2. Piece together business details (name, services, phone, area)
+3. Write a personalized onboarding call script from scratch
+
+This is repetitive, error-prone, and slows down the handoff. The real bottleneck isn't the call itself — it's the 10–15 minutes of prep before picking up the phone.
+
+### Solution: A 3-Step AI Pipeline
+Rather than a generic chatbot, I designed a **structured pipeline** that mirrors exactly what a producer does manually:
+
+```
+Fetch → Extract → Generate
+```
+
+Each step has a clear input/output contract, making the system predictable and debuggable. If one step fails, the others continue with whatever data is available.
+
+### Data Thinking
+The central data structure is the **ClientCard** — a normalized intermediate representation that sits between raw HTML and personalized communication. This separation matters:
+- The **scan** fills the card (business name, services, contact info, digital assets)
+- The **script generator** consumes the card as a structured prompt — it never sees raw HTML
+
+This means extraction and generation are fully decoupled: swap Claude for regex (or vice versa) without touching anything else. The card is the contract.
+
+The **status flow** (`ממתין → סורק → מוכן → נשלח`) maps directly to real producer workflow stages, making it easy to filter, prioritize, and track workload at a glance.
+
+### AI Strategy
+Two different models for two different tasks:
+
+| Task | Model | Why |
+|---|---|---|
+| **Extraction** | Claude Haiku | Fast, cheap, structured output from noisy HTML |
+| **Script generation** | Claude Opus 4.6 | Requires nuanced Hebrew copywriting and tone |
+
+**Graceful degradation by design:** the system works fully without any API key — local Schema.org/regex parsing for extraction, string-template interpolation for scripts. A producer can run it on day one with zero credentials and upgrade to AI quality when ready.
+
+### What I'd Add With More Time
+- **Real email send** — actual SMTP via SendGrid (currently simulated)
+- **Batch import** — scan a CSV of new clients in bulk
+- **Script feedback loop** — producer edits feed back into future prompt improvements
+- **Analytics** — track which script sections get edited most
+
+---
+
 ## How It Works
 
 The system runs a 3-step AI pipeline per client:
@@ -34,7 +80,7 @@ After the script is generated, the producer can preview it as a formatted email 
 
 ```bash
 # 1. Clone and install
-git clone <your-repo-url>
+git clone https://github.com/SamiHam162/ZapCRM
 cd zap-onboarding-crm
 npm install
 
@@ -114,8 +160,6 @@ A dental clinic in Haifa. This client represents the **in-progress scan state** 
    - **שם עסק** — business name (required)
    - **כתובת אתר** — website URL (optional but improves extraction quality)
    - **כתובת דפי זהב** — Dapei Zahav listing URL (optional)
-   - **אזור** — area / city
-   - **סוג עסק** — business type
    - **הערות** — any notes
 3. At least one URL (website or Dapei Zahav) is required to run a scan. Without URLs, you can still add the client manually.
 4. Click **הוספת לקוח** — the client is created with status `ממתין` and you are taken to the detail page.
