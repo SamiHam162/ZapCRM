@@ -2,10 +2,10 @@ import { ClientStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const statusStyles: Record<ClientStatus, string> = {
-  'ממתין': 'bg-gray-100 text-gray-600',
-  'סורק': 'bg-blue-100 text-blue-700',
-  'מוכן': 'bg-green-100 text-green-700',
-  'נשלח': 'bg-orange-100 text-zap-orange',
+  'ממתין': 'bg-amber-100 text-amber-700 border border-amber-200',
+  'סורק': 'bg-blue-100 text-blue-700 border border-blue-200',
+  'מוכן': 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+  'נשלח': 'bg-orange-100 text-orange-700 border border-orange-200',
 };
 
 interface StatusBadgeProps {

@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/clients', label: 'דשבורד' },
   { href: '/clients', label: 'לקוחות' },
 ];
 
@@ -13,7 +12,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex flex-col w-64 min-h-screen bg-zap-dark shrink-0">
+    <aside className="flex flex-col w-52 min-h-screen bg-zap-dark shrink-0">
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-5 border-b border-white/10">
         <span className="text-2xl">⚡</span>
@@ -44,7 +43,7 @@ export function Sidebar() {
       {/* Version badge */}
       <div className="px-6 py-4">
         <span className="text-xs text-white/30 bg-white/5 px-2 py-1 rounded">
-          גרסה 1.0 · דמו
+          גרסה 1.0
         </span>
       </div>
     </aside>

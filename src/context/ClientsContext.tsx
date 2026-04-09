@@ -9,7 +9,9 @@ const STORAGE_KEY = 'zap-crm-clients';
 type Action =
   | { type: 'ADD_CLIENT'; client: Client }
   | { type: 'UPDATE_CLIENT'; id: string; updates: Partial<Client> }
-  | { type: 'SET_STATUS'; id: string; status: ClientStatus };
+  | { type: 'SET_STATUS'; id: string; status: ClientStatus }
+  | { type: 'DELETE_CLIENT'; id: string }
+  | { type: 'SEND_SCRIPT'; id: string; sentAt: string };
 
 function reducer(state: Client[], action: Action): Client[] {
   switch (action.type) {
@@ -19,6 +21,12 @@ function reducer(state: Client[], action: Action): Client[] {
       return state.map((c) => (c.id === action.id ? { ...c, ...action.updates } : c));
     case 'SET_STATUS':
       return state.map((c) => (c.id === action.id ? { ...c, status: action.status } : c));
+    case 'DELETE_CLIENT':
+      return state.filter((c) => c.id !== action.id);
+    case 'SEND_SCRIPT':
+      return state.map((c) =>
+        c.id === action.id ? { ...c, status: 'נשלח', sentAt: action.sentAt } : c
+      );
     default:
       return state;
   }

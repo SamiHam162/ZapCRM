@@ -26,6 +26,15 @@ export interface ClientCard {
   scannedAt: string;
 }
 
+export type ScanStepStatus = 'pending' | 'active' | 'done' | 'failed';
+
+export interface ScanStepState {
+  id: number;
+  icon: string;
+  label: string;
+  status: ScanStepStatus;
+}
+
 export interface CallScriptSection {
   title: string;
   content: string;
