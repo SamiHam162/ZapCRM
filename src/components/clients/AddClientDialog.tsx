@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { useClients } from '@/hooks/useClients';
 
 interface AddClientDialogProps {
@@ -30,6 +31,24 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
   const [urlError, setUrlError] = useState('');
   const [nameError, setNameError] = useState('');
 
+  function resetForm() {
+    setBusinessName('');
+    setWebsiteUrl('');
+    setDapeiZahavUrl('');
+    setNotes('');
+    setUrlError('');
+    setNameError('');
+  }
+
+  function isValidUrl(value: string): boolean {
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -42,9 +61,20 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
       valid = false;
     }
 
-    if (!websiteUrl.trim() && !dapeiZahavUrl.trim()) {
+    const website = websiteUrl.trim();
+    const dapei = dapeiZahavUrl.trim();
+
+    if (!website && !dapei) {
       setUrlError('יש להזין לפחות כתובת URL אחת (אתר או דפי זהב)');
       valid = false;
+    } else {
+      if (website && !isValidUrl(website)) {
+        setUrlError('כתובת אתר האינטרנט אינה תקינה');
+        valid = false;
+      } else if (dapei && !isValidUrl(dapei)) {
+        setUrlError('כתובת דפי זהב אינה תקינה');
+        valid = false;
+      }
     }
 
     if (!valid) return;
@@ -55,19 +85,15 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
       client: {
         id,
         businessName: businessName.trim(),
-        websiteUrl: websiteUrl.trim() || undefined,
-        dapeiZahavUrl: dapeiZahavUrl.trim() || undefined,
+        websiteUrl: website || undefined,
+        dapeiZahavUrl: dapei || undefined,
         notes: notes.trim() || undefined,
         status: 'ממתין',
         createdAt: new Date().toISOString(),
       },
     });
 
-    // Reset form
-    setBusinessName('');
-    setWebsiteUrl('');
-    setDapeiZahavUrl('');
-    setNotes('');
+    resetForm();
     onOpenChange(false);
     router.push(`/clients/${id}`);
   }
@@ -120,13 +146,12 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="notes">הערות (אופציונלי)</Label>
-            <textarea
+            <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="מידע נוסף על הלקוח..."
               rows={3}
-              className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
             />
           </div>
 
@@ -134,7 +159,7 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={() => { resetForm(); onOpenChange(false); }}
             >
               ביטול
             </Button>

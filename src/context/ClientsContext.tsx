@@ -25,6 +25,7 @@ function reducer(state: Client[], action: Action): Client[] {
 }
 
 function loadInitialState(): Client[] {
+  if (typeof window === 'undefined') return MOCK_CLIENTS;
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {

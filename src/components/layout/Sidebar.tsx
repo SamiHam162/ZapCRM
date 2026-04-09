@@ -22,11 +22,11 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex flex-col gap-1 p-3 flex-1">
-        {navLinks.map((link, i) => {
+        {navLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
           return (
             <Link
-              key={i}
+              key={link.label}
               href={link.href}
               className={cn(
                 'flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors',
